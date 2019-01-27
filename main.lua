@@ -6,7 +6,8 @@ function love.load()
    player.y = love.graphics:getHeight() - 70
    player.width = 50
    player.height = 50
-   player.speed = 150
+   player.speed = 190
+   player.velocity = 0
    player.bullets = {}
 
    enemyController = {}
@@ -56,7 +57,6 @@ function startGame()
 
 end
 
-
 function love.update(dt)
    updateExplosions(dt)
 
@@ -68,13 +68,22 @@ function love.update(dt)
       end
 
       -- Update player
-      if love.keyboard.isDown('right') and player.x < love.graphics:getWidth() - player.width then
-         player.x = player.x + player.speed * dt
+      if love.keyboard.isDown('right') and player.velocity < player.speed and player.x < love.graphics:getWidth() - player.width then
+         player.velocity = player.velocity + 550 * dt
+
+      elseif love.keyboard.isDown('left') and player.velocity > -player.speed and player.x > 0 then
+         player.velocity = player.velocity - 550 * dt
+      else 
+        if player.velocity > -15 and player.velocity < 15 then
+          player.velocity = 0
+        elseif player.velocity > 0 then
+          player.velocity = player.velocity - 390 * dt
+        else
+          player.velocity = player.velocity + 390 * dt
+        end
       end
 
-      if love.keyboard.isDown('left') and player.x > 0 then
-         player.x = player.x - player.speed * dt
-      end
+      player.x = player.x + player.velocity * dt
 
       -- Update bullets
       for i, bullet in ipairs(player.bullets) do
